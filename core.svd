@@ -1617,6 +1617,13 @@
                                     <value>0x05FA</value>
                                 </enumeratedValue>
                             </enumeratedValues>
+                            <!-- Kvasir: a key, every write must carry it; Armv7-M ARM DDI0403E, AIRCR: writes need 0x05FA, reads return 0xFA05 (line 20985 of the converted text) -->
+                            <writeConstraint>
+                                <range>
+                                    <minimum>0x05FA</minimum>
+                                    <maximum>0x05FA</maximum>
+                                </range>
+                            </writeConstraint>
                         </field>
                         <field>
                             <name>ENDIANNESS</name>
