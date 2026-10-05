@@ -205,6 +205,29 @@ static FaultInfo GetFaultInfo() {
     return info;
 }
 
+// A plain copy of the fault registers for the SDK's full fault record (Kvasir::CrashRecord::Full,
+// FaultHandler.hpp): no analysis, no log, nothing that can fault. Addresses from the Armv7-M ARM DDI0403E.e SCB table (B3.2.2).
+struct Snapshot {
+    std::uint32_t cfsr, hfsr, mmfar, bfar, shcsr, icsr, sfsr, sfar;
+    bool          faultRegs;    // cfsr .. shcsr are real
+    bool          secureRegs;   // no Security Extension: sfsr, sfar are 0
+};
+
+inline Snapshot snapshot() {
+    auto const at
+      = [](std::uintptr_t a) { return *reinterpret_cast<std::uint32_t const volatile*>(a); };
+    return Snapshot{.cfsr       = at(0xE000'ED28),
+                    .hfsr       = at(0xE000'ED2C),
+                    .mmfar      = at(0xE000'ED34),
+                    .bfar       = at(0xE000'ED38),
+                    .shcsr      = at(0xE000'ED24),
+                    .icsr       = at(0xE000'ED04),
+                    .sfsr       = 0,
+                    .sfar       = 0,
+                    .faultRegs  = true,
+                    .secureRegs = false};
+}
+
 using EarlyInitList = decltype(MPL::list(
   // Enable fault exceptions
   write(SCB_R::SHCSR::MEMFAULTENAValC::enable_memmanage_fault),
