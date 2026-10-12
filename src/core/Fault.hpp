@@ -228,6 +228,22 @@ inline Snapshot snapshot() {
                     .secureRegs = false};
 }
 
+// CFSR and HFSR are write-one-to-clear ("Write a one to a register bit to clear the corresponding fault", Armv7-M
+// ARM DDI0403E B3.2.15/16, B3.2.2): writing back what was read clears this fault's bits, MMARVALID/BFARVALID with
+// them, and keeps a bit a nested fault set meanwhile. Whole-register writes: a field write would read the register
+// again first. For a fault handler that returns, and a start without a core reset, where the next fault would
+// otherwise find the old bits OR'ed into its own.
+inline void clearFaultStatus(std::uint32_t cfsr,
+                             std::uint32_t hfsr) {
+    apply(write(SCB_R::CFSR::FULLREGISTER, cfsr));
+    apply(write(SCB_R::HFSR::FULLREGISTER, hfsr));
+}
+
+inline void clearFaultStatus() {
+    clearFaultStatus(apply(read(SCB_R::CFSR::FULLREGISTER)),
+                     apply(read(SCB_R::HFSR::FULLREGISTER)));
+}
+
 using EarlyInitList = decltype(MPL::list(
   // Enable fault exceptions
   write(SCB_R::SHCSR::MEMFAULTENAValC::enable_memmanage_fault),
