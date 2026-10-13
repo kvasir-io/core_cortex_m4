@@ -214,14 +214,13 @@ struct Snapshot {
 };
 
 inline Snapshot snapshot() {
-    auto const at
-      = [](std::uintptr_t a) { return *reinterpret_cast<std::uint32_t const volatile*>(a); };
-    return Snapshot{.cfsr       = at(0xE000'ED28),
-                    .hfsr       = at(0xE000'ED2C),
-                    .mmfar      = at(0xE000'ED34),
-                    .bfar       = at(0xE000'ED38),
-                    .shcsr      = at(0xE000'ED24),
-                    .icsr       = at(0xE000'ED04),
+    using Kvasir::Register::readWhole;
+    return Snapshot{.cfsr       = readWhole(SCB_R::CFSR::FULLREGISTER),
+                    .hfsr       = readWhole(SCB_R::HFSR::FULLREGISTER),
+                    .mmfar      = readWhole(SCB_R::MMFAR::FULLREGISTER),
+                    .bfar       = readWhole(SCB_R::BFAR::FULLREGISTER),
+                    .shcsr      = readWhole(SCB_R::SHCSR::FULLREGISTER),
+                    .icsr       = readWhole(SCB_R::ICSR::FULLREGISTER),
                     .sfsr       = 0,
                     .sfar       = 0,
                     .faultRegs  = true,
