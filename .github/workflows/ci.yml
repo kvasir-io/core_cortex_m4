@@ -1,0 +1,65 @@
+name: CI
+
+# prio4: core_prio4.svd is what scripts/make_prio4_svd.py makes of core.svd (tests/CMakeLists.txt, python only).
+# conformance: the core's conformance tree (tests/conformance), Kvasir_SDK package-conformance.yml.
+# decoders: core_cortex_common's NVIC/SCB decoder, clear-all and must-fail tests (src/cortex_common/tests, the
+# submodule at its pinned commit) against THIS checkout's core.svd; the other cores' configurations are built from
+# their master and not run here.
+
+on:
+    push:
+        branches:
+            - master
+    pull_request:
+        branches:
+            - master
+    workflow_dispatch:
+
+jobs:
+    prio4:
+        name: prio4
+        runs-on: ubuntu-latest
+        container:
+            image: archlinux:latest
+
+        steps:
+            - name: Set up the tools
+              run: |
+                pacman -Syu --noconfirm --disable-download-timeout
+                pacman -S --noconfirm --disable-download-timeout cmake ninja python
+
+            - name: Checkout repository
+              uses: actions/checkout@v6
+
+            - name: Check core_prio4.svd
+              run: cmake -S tests -B build/tests -G Ninja && ctest --test-dir build/tests --output-on-failure
+
+    decoders:
+        name: decoders
+        runs-on: ubuntu-latest
+        container:
+            image: archlinux:latest
+
+        steps:
+            - name: Set up the tools
+              run: |
+                pacman -Syu --noconfirm --disable-download-timeout
+                pacman -S --noconfirm --disable-download-timeout git cmake ninja base-devel python
+
+            - name: Checkout repository
+              uses: actions/checkout@v6
+              with:
+                submodules: true
+
+            - name: Decoder tests on this core.svd
+              run: |
+                cmake -S src/cortex_common/tests -B build/decoders -G Ninja -DCORE_CORTEX_M4_ROOT="$GITHUB_WORKSPACE"
+                cmake --build build/decoders
+                ctest --test-dir build/decoders --output-on-failure -R '_m4(_prio4)?$'
+
+    conformance:
+        uses: kvasir-io/Kvasir_SDK/.github/workflows/package-conformance.yml@master
+
+    # the include layering of this repository against Kvasir_SDK tools/layers.toml (any finding fails)
+    layers:
+        uses: kvasir-io/Kvasir_SDK/.github/workflows/package-layers.yml@master

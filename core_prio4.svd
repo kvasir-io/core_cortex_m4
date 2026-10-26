@@ -808,7 +808,8 @@
                             </enumeratedValues>
                         </field>
                         <field>
-                            <name>NUM_CODE[6:4]</name>
+                            <!-- Kvasir: Armv7-M ARM DDI0403E C1.11.3 FP_CTRL NUM_CODE[6:4], bits [14:12]; the bit range is no part of a C++ identifier -->
+                            <name>NUM_CODE_6_4</name>
                             <description>Number of comperators 6:4</description>
                             <bitRange>[14:12]</bitRange>
                         </field>
@@ -818,7 +819,8 @@
                             <bitRange>[11:8]</bitRange>
                         </field>
                         <field>
-                            <name>NUM_CODE[3:0]</name>
+                            <!-- Kvasir: Armv7-M ARM DDI0403E C1.11.3 FP_CTRL NUM_CODE[3:0], bits [7:4]; the bit range is no part of a C++ identifier -->
+                            <name>NUM_CODE_3_0</name>
                             <description>Number of comperators 3:0</description>
                             <bitRange>[7:4]</bitRange>
                         </field>
@@ -882,6 +884,7 @@
                     <dim>8</dim>
                     <dimIncrement>4</dimIncrement>
                     <fields>
+                        <!-- Kvasir: Armv7-M ARM DDI0403E C1.11.5, the FP_COMPn bit assignment of FPB version 1 (FP_CTRL.REV 0b0000, which the Cortex-M4 has: FP_CTRL resets to 0x260, Cortex-M4 TRM 100166 r0p1 8.3.3 Table 8-7, md l.3384 - REV 0, 6 code and 2 literal comparators, DDI0403E C1.11.3): REPLACE [31:30], COMP [28:2], ENABLE [0]; bits 29 and 1 reserved. The vendor file also held the version-2 fields (BPADDR, BE, FE, FPADDR, DCBA) and text fragments as fields over the same bits; the version-2 layouts are not described here -->
                         <field>
                             <name>REPLACE</name>
                             <description>For an instruction address comparator</description>
@@ -911,22 +914,6 @@
                             <bitRange>[28:2]</bitRange>
                         </field>
                         <field>
-                            <name>For a literal address or instruction address remap</name>
-                            <description>of the comparison are also zero</description>
-                            <bitRange>[1:0]</bitRange>
-                        </field>
-                        <field>
-                            <name>For an instruction address breakpoint</name>
-                            <description>of the comparison are encoded by the REPLACE field</description>
-                            <bitRange>[1:0]</bitRange>
-                            <enumeratedValues>
-                                <enumeratedValue>
-                                    <description>30 29 28 2 1 0 COMP Reserved REPLACE Reserved ENABLE C1 ARMv7-M Debug C1</description>
-                                    <value>31</value>
-                                </enumeratedValue>
-                            </enumeratedValues>
-                        </field>
-                        <field>
                             <name>ENABLE</name>
                             <description>Enable bit for this comparator</description>
                             <bitRange>[0:0]</bitRange>
@@ -937,86 +924,6 @@
                                 </enumeratedValue>
                                 <enumeratedValue>
                                     <description>Comparator enabled</description>
-                                    <value>1</value>
-                                </enumeratedValue>
-                            </enumeratedValues>
-                        </field>
-                        <field>
-                            <name>BPADDR</name>
-                            <description>Breakpoint address</description>
-                            <bitRange>[31:1]</bitRange>
-                        </field>
-                        <field>
-                            <name>BE</name>
-                            <description>Enable bit for Breakpoint</description>
-                            <bitRange>[0:0]</bitRange>
-                            <enumeratedValues>
-                                <enumeratedValue>
-                                    <description>Breakpoint disabled</description>
-                                    <value>0</value>
-                                </enumeratedValue>
-                                <enumeratedValue>
-                                    <description>Breakpoint enabled</description>
-                                    <value>1</value>
-                                </enumeratedValue>
-                            </enumeratedValues>
-                        </field>
-                        <field>
-                            <name>DCBA</name>
-                            <description>This field is defined depending on the value for Breakpoint Enabled</description>
-                            <bitRange>[31:1]</bitRange>
-                        </field>
-                        <field>
-                            <name>BPADDR</name>
-                            <description>Breakpoint address</description>
-                            <bitRange>[31:1]</bitRange>
-                        </field>
-                        <field>
-                            <name>FE</name>
-                            <description>Specifies if Flash Patch enabled</description>
-                            <bitRange>[31:31]</bitRange>
-                            <enumeratedValues>
-                                <enumeratedValue>
-                                    <description>Flash Patch disabled</description>
-                                    <value>0</value>
-                                </enumeratedValue>
-                                <enumeratedValue>
-                                    <description>Flash Patch enabled</description>
-                                    <value>1</value>
-                                </enumeratedValue>
-                            </enumeratedValues>
-                        </field>
-                        <field>
-                            <name>FPADDR</name>
-                            <description>Specifies bits[28</description>
-                            <bitRange>[28:2]</bitRange>
-                        </field>
-                        <field>
-                            <name>BE</name>
-                            <description>Breakpoint Enabled bit</description>
-                            <bitRange>[0:0]</bitRange>
-                            <enumeratedValues>
-                                <enumeratedValue>
-                                    <description>Breakpoint disabled</description>
-                                    <value>0</value>
-                                </enumeratedValue>
-                                <enumeratedValue>
-                                    <description>Breakpoint enabled</description>
-                                    <value>1</value>
-                                </enumeratedValue>
-                            </enumeratedValues>
-                        </field>
-                        <field>
-                            <name>In protocol packets</name>
-                            <description>of each byte, including the header byte, but not including the last byte of a 7-byte packet, is a continuation bit, C</description>
-                            <bitRange>[7:7]</bitRange>
-                            <enumeratedValues>
-                                <enumeratedValue>
-                                    <description>This is the last byte of the packet</description>
-                                    <value>0</value>
-                                </enumeratedValue>
-                                <enumeratedValue>
-                                    <description>This is not the last byte of the packet</description>
                                     <value>1</value>
                                 </enumeratedValue>
                             </enumeratedValues>
@@ -1245,6 +1152,8 @@
                             <bitRange>[0:0]</bitRange>
                             <dim>32</dim>
                             <dimIncrement>1</dimIncrement>
+                            <!-- Kvasir: Armv7-M ARM DDI0403E B3.4.4: a 1 enables the interrupt, a 0 has no effect -->
+                            <modifiedWriteValues>oneToSet</modifiedWriteValues>
                             <enumeratedValues>
                                 <enumeratedValue>
                                     <description>No effect</description>
@@ -1273,6 +1182,8 @@
                             <bitRange>[0:0]</bitRange>
                             <dim>32</dim>
                             <dimIncrement>1</dimIncrement>
+                            <!-- Kvasir: Armv7-M ARM DDI0403E B3.4.5: a 1 disables the interrupt, a 0 has no effect -->
+                            <modifiedWriteValues>oneToClear</modifiedWriteValues>
                             <enumeratedValues>
                                 <enumeratedValue>
                                     <description>No effect</description>
@@ -1301,6 +1212,8 @@
                             <bitRange>[0:0]</bitRange>
                             <dim>32</dim>
                             <dimIncrement>1</dimIncrement>
+                            <!-- Kvasir: Armv7-M ARM DDI0403E B3.4.6: a 1 sets the interrupt pending, a 0 has no effect -->
+                            <modifiedWriteValues>oneToSet</modifiedWriteValues>
                             <enumeratedValues>
                                 <enumeratedValue>
                                     <description>No effect</description>
@@ -1329,6 +1242,8 @@
                             <bitRange>[0:0]</bitRange>
                             <dim>32</dim>
                             <dimIncrement>1</dimIncrement>
+                            <!-- Kvasir: Armv7-M ARM DDI0403E B3.4.7: a 1 clears its pending state, a 0 has no effect -->
+                            <modifiedWriteValues>oneToClear</modifiedWriteValues>
                             <enumeratedValues>
                                 <enumeratedValue>
                                     <description>No effect</description>
@@ -4904,7 +4819,8 @@
                     <access>read-only</access>
                     <fields>
                         <field>
-                            <name>SWIDTH[31:0]</name>
+                            <!-- Kvasir: Armv7-M ARM DDI0403E C1.10.2 names the field SWIDTH[31:0] (bit N: width N+1); the bit range is no part of a C++ identifier -->
+                            <name>SWIDTH</name>
                             <description>SWIDTH[N] represents a trace port width of (N+1)</description>
                             <bitRange>[31:0]</bitRange>
                             <enumeratedValues>
@@ -4928,7 +4844,8 @@
                     <access>read-write</access>
                     <fields>
                         <field>
-                            <name>CWIDTH[31:0]</name>
+                            <!-- Kvasir: Armv7-M ARM DDI0403E C1.10.3 names the field CWIDTH[31:0] (bit N: width N+1); the bit range is no part of a C++ identifier -->
+                            <name>CWIDTH</name>
                             <description>CWIDTH[N] represents a trace port width of (N+1)</description>
                             <bitRange>[31:0]</bitRange>
                             <enumeratedValues>
