@@ -13,18 +13,18 @@
 #include "core/core.hpp"
 #include "cortex_common/Debug.hpp"
 
-namespace Conformance {
-[[gnu::used]] static void coreWrites() {
-    using Kvasir::Register::apply;
-    apply(Kvasir::Nvic::makeEnable(Kvasir::Interrupt::systick));
-    apply(Kvasir::Nvic::makeDisable(Kvasir::Interrupt::systick));
-    apply(Kvasir::Nvic::makeSetPending(Kvasir::Interrupt::systick));
-    apply(Kvasir::Nvic::makeClearPending(Kvasir::Interrupt::systick));
-    apply(Kvasir::Nvic::makeSetPriority<1>(Kvasir::Interrupt::systick));
-    apply(Kvasir::Nvic::makeEnable(Kvasir::Interrupt::dma2_stream0));
-    apply(Kvasir::Nvic::makeSetPriority<2>(Kvasir::Interrupt::dma2_stream0));
-    apply(Kvasir::SystemControl::SystemReset{});
-    Kvasir::Core::Debug::enableCycleCounter();
-    static_cast<void>(SystickClock::now());
-}
-}   // namespace Conformance
+namespace Conformance { namespace {
+    [[gnu::used]] void coreWrites() {
+        using Kvasir::Register::apply;
+        apply(Kvasir::Nvic::makeEnable(Kvasir::Interrupt::systick));
+        apply(Kvasir::Nvic::makeDisable(Kvasir::Interrupt::systick));
+        apply(Kvasir::Nvic::makeSetPending(Kvasir::Interrupt::systick));
+        apply(Kvasir::Nvic::makeClearPending(Kvasir::Interrupt::systick));
+        apply(Kvasir::Nvic::makeSetPriority<1>(Kvasir::Interrupt::systick));
+        apply(Kvasir::Nvic::makeEnable(Kvasir::Interrupt::dma2_stream0));
+        apply(Kvasir::Nvic::makeSetPriority<2>(Kvasir::Interrupt::dma2_stream0));
+        apply(Kvasir::SystemControl::SystemReset{});
+        Kvasir::Core::Debug::enableCycleCounter();
+        static_cast<void>(SystickClock::now());
+    }
+}}   // namespace Conformance
